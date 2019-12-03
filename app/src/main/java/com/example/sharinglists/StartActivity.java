@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.sharinglists.user_sign.LoginActivity;
 import com.example.sharinglists.user_sign.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -24,8 +25,8 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        //Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
-        //startActivity(loginIntent);
+        Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
+        startActivity(loginIntent);
     }
 
     public void register(View view) {
@@ -34,10 +35,12 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void updateActivivty() {
-        if (fAuth.getCurrentUser() == null) {
+        if (fAuth.getCurrentUser() != null) {
             Intent startIntent = new Intent(this, MainActivity.class);
             startActivity(startIntent);
             finish();
         }
     }
+
+
 }

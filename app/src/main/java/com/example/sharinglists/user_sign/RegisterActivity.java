@@ -29,10 +29,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputEmail;
     private EditText inputPassword;
 
-    private String name;
-    private String email;
-    private String password;
-
     private ProgressDialog progressDialog;
 
     @Override
@@ -41,39 +37,47 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         inputName = findViewById(R.id.input_register_name);
-        inputName = findViewById(R.id.input_register_email);
-        inputName = findViewById(R.id.input_register_password);
+        inputEmail = findViewById(R.id.input_register_email);
+        inputPassword = findViewById(R.id.input_register_password);
 
-        name = inputName.getText().toString().trim();
-        email = inputEmail.getText().toString().trim();
-        password = inputPassword.getText().toString().trim();
-
+        fAuth = FirebaseAuth.getInstance();
         fUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     public void registerUser(View view) {
+        final String name = inputName.getText().toString().trim();
+        final String email = inputEmail.getText().toString().trim();
+        final String password = inputPassword.getText().toString().trim();
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Creating account, please wait...");
-        fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+        fAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     fUserDatabase.child(fAuth.getCurrentUser().getUid())
-                            .child("info").child("name")
-                            .setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                progressDialog.dismiss();
-                                Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                startActivity(mainIntent);
-                            }
-                            else {
-                                progressDialog.dismiss();
-                                Toast.makeText(RegisterActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                            .child("info").child("name").setValue(name)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if (task.isSuccessful()){
+                                        progressDialog.dismiss();
+
+                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                                        startActivity(mainIntent);
+                                        finish();
+                                        Toast.makeText(RegisterActivity.this, "User successfully created!", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(RegisterActivity.this, "ERROR : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
                 }
                 else {
                     progressDialog.dismiss();
