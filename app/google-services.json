@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "171944081526",
+    "firebase_url": "https://sharinglists.firebaseio.com",
+    "project_id": "sharinglists",
+    "storage_bucket": "sharinglists.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171944081526:android:64472f906b0560361b0757",
+        "android_client_info": {
+          "package_name": "com.example.sharinglists"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "171944081526-eh0kdiinm5ukp08126igialf5uj4tdj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWpW6gUq-sG0XqWEe1JqNSUVL_lYwdCs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "171944081526-eh0kdiinm5ukp08126igialf5uj4tdj7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
