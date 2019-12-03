@@ -1,4 +1,4 @@
-package com.example.sharinglists.user_sign;
+package com.example.sharinglists.sign;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.example.sharinglists.MainActivity;
 import com.example.sharinglists.R;
-import com.example.sharinglists.StartActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

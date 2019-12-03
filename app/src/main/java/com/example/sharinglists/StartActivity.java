@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.sharinglists.user_sign.LoginActivity;
-import com.example.sharinglists.user_sign.RegisterActivity;
+import com.example.sharinglists.sign.LoginActivity;
+import com.example.sharinglists.sign.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class StartActivity extends AppCompatActivity {
