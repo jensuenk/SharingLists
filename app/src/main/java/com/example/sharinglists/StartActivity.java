@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import com.example.sharinglists.user_sign.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,13 +29,13 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
-        Intent registerIntent = new Intent(StartActivity.this, RegisterActivity.class);
+        Intent registerIntent = new Intent(this, RegisterActivity.class);
         startActivity(registerIntent);
     }
 
     private void updateActivivty() {
         if (fAuth.getCurrentUser() == null) {
-            Intent startIntent = new Intent(StartActivity.this, MainActivity.class);
+            Intent startIntent = new Intent(this, MainActivity.class);
             startActivity(startIntent);
             finish();
         }
