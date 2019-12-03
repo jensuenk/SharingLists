@@ -22,10 +22,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateActivivty() {
+        // Check if user is logged in
         if (fAuth.getCurrentUser() == null) {
             Intent startIntent = new Intent(this, StartActivity.class);
             startActivity(startIntent);
             finish();
+        }
+        else
+        {
+
         }
     }
 }

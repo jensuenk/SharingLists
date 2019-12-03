@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">SharingLists</string>
     <string name="sharing_lists">Sharing Lists</string>
-    <string name="login">login</string>
-    <string name="regsiter">regsiter</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="name">Name</string>
-    <string name="login">login</string>
+    <string name="login_btn">login</string>
+    <string name="regsiter_btn">regisiter</string>
+    <string name="email_input_hint">Email</string>
+    <string name="password_input_hint">Password</string>
+    <string name="name_input_hint">Name</string>
     <string name="logo_desc">logo</string>
+    <string name="login_label">Login</string>
+    <string name="register_label">Register</string>
 </resources>
