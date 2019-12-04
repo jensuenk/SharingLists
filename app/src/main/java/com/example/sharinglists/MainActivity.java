@@ -3,10 +3,12 @@ package com.example.sharinglists;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,19 +36,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mListsList = findViewById(R.id.main_lists_list);
+        mListsList = (RecyclerView) findViewById(R.id.main_lists_list);
         mListsList.setHasFixedSize(true);
-        mListsList.setLayoutManager(new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false));
+        mListsList.setLayoutManager(new LinearLayoutManager(this));
 
         fAuth = FirebaseAuth.getInstance();
 
         updateActivivty();
 
         if (fAuth != null) {
-            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Notes").child(fAuth.getCurrentUser().getUid());
+            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
             generateLists();
         }
     }
+
 
     private void updateActivivty() {
         // Check if user is logged in
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseRecyclerAdapter<ListModel, ListViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<ListModel, ListViewHolder>(options) {
+
                     @Override
                     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
                     {

@@ -48,8 +48,8 @@ public class NewListActivity extends AppCompatActivity {
         final String title = inputTitle.getText().toString().trim();
         final String description = inputDecription.getText().toString().trim();
 
-        if (TextUtils.isEmpty(title) || TextUtils.isEmpty(description)) {
-            Toast.makeText(this, "ERROR: Fill in all fields!", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(title)) {
+            Toast.makeText(this, "ERROR: Fill in a title!", Toast.LENGTH_SHORT).show();
             return;
         }
 

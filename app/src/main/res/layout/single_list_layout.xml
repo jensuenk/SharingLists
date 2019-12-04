@@ -7,15 +7,24 @@
     android:layout_gravity="center"
     android:layout_margin="20dp">
 
-    <TextView
-        android:id="@+id/list_card_title"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="156dp"
         android:layout_height="match_parent"
-        android:text="@string/title_input_hint" />
-    <TextView
-        android:id="@+id/list_card_description"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/description_input_hint" />
+        android:minWidth="156dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/list_card_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/list_card_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="" />
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
