@@ -28,9 +28,5 @@ public class MainActivity extends AppCompatActivity {
             startActivity(startIntent);
             finish();
         }
-        else
-        {
-
-        }
     }
 }

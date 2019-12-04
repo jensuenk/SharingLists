@@ -9,4 +9,7 @@
     <string name="logo_desc">logo</string>
     <string name="login_label">Login</string>
     <string name="register_label">Register</string>
+    <string name="title_input_hint">Type your title here...</string>
+    <string name="description_input_hint">Type your description here...</string>
+    <string name="createlist_btn">Create List</string>
 </resources>

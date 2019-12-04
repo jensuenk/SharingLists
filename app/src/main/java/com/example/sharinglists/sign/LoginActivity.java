@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -44,12 +45,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginUser(View view) {
+        final String email = inputEmail.getText().toString().trim();
+        final String password = inputPassword.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "ERROR: Fill in all fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loggin in, please wait...");
         progressDialog.show();
-
-        final String email = inputEmail.getText().toString().trim();
-        final String password = inputPassword.getText().toString().trim();
 
         fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
