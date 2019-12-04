@@ -67,8 +67,8 @@ public class NewListActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    //Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    //startActivity(mainIntent);
+                    Intent mainIntent = new Intent(NewListActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
                     finish();
 
                     Toast.makeText(NewListActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
