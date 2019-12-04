@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -28,5 +29,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(startIntent);
             finish();
         }
+    }
+
+    public void newList(View view) {
+        Intent newListIntent = new Intent(this, NewListActivity.class);
+        startActivity(newListIntent);
+        finish();
     }
 }
