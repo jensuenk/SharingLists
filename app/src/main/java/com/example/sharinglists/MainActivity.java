@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference fListDatabase;
 
     private RecyclerView mListsList;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void generateLists() {
         Toast.makeText(this, "Retreiving lists, please wait...", Toast.LENGTH_SHORT).show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Retreiving lists, please wait...");
+        progressDialog.show();
 
         Query query = fListDatabase.orderByValue();
         FirebaseRecyclerOptions<ListModel> options = new FirebaseRecyclerOptions.Builder<ListModel>()
@@ -119,5 +125,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
         mListsList.setAdapter(firebaseRecyclerAdapter);
+        progressDialog.dismiss();
     }
 }

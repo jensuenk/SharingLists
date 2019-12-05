@@ -32,20 +32,25 @@ public class NewListActivity extends AppCompatActivity {
 
     private EditText inputTitle;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_list);
 
+        Intent intent = getIntent();
+        String listId = intent.getStringExtra("listId");
+
         inputTitle = findViewById(R.id.input_newlist_title);
 
         fAuth = FirebaseAuth.getInstance();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
-        // TODO: child list id
-        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child("Items");
+        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("Items");
     }
 
     public void createList(View view) {
+        // TODO: move to popup on main_activity
         final String title = inputTitle.getText().toString().trim();
 
         if (TextUtils.isEmpty(title)) {
@@ -96,7 +101,6 @@ public class NewListActivity extends AppCompatActivity {
                 else {
                     Toast.makeText( NewListActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                progressDialog.dismiss();
             }
         });
     }
