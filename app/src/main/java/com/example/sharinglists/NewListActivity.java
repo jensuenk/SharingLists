@@ -26,6 +26,7 @@ public class NewListActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private DatabaseReference fListDatabase;
+    private DatabaseReference fItemDatabase;
 
     private ProgressDialog progressDialog;
 
@@ -40,6 +41,8 @@ public class NewListActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+        // TODO: child list id
+        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child("Items");
     }
 
     public void createList(View view) {
@@ -78,5 +81,23 @@ public class NewListActivity extends AppCompatActivity {
     }
 
     public void newItem(View view) {
+        DatabaseReference fnewItemDatabase = fItemDatabase.push();
+
+        Map listMap = new HashMap();
+        listMap.put("title", "");
+        listMap.put("check", "false");
+
+        fnewItemDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+                else {
+                    Toast.makeText( NewListActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                progressDialog.dismiss();
+            }
+        });
     }
 }
