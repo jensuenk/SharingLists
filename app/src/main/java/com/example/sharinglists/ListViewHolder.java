@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ListViewHolder extends RecyclerView.ViewHolder {
@@ -11,7 +12,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     View mView;
 
     TextView cardTitle;
-    TextView cardDescription;
+    CardView listCard;
 
     public ListViewHolder(View itemView) {
         super(itemView);
@@ -19,14 +20,10 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         mView = itemView;
 
         cardTitle = mView.findViewById(R.id.list_card_title);
-        cardDescription = mView.findViewById(R.id.list_card_description);
+        listCard = mView.findViewById(R.id.card_view);
     }
 
     public void setListTitle(String title) {
         cardTitle.setText(title);
-    }
-
-    public void setListDescription(String description) {
-        cardDescription.setText(description);
     }
 }

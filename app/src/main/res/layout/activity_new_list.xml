@@ -32,24 +32,33 @@
             android:alpha=".3"
             android:background="@android:color/black" />
 
-        <EditText
-            android:id="@+id/input_newlist_description"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:gravity="top"
-            android:hint="@string/description_input_hint"
-            android:inputType="textMultiLine"
-            android:padding="10dp" />
-
         <Button
-            android:id="@+id/new_note_btn"
+            android:id="@+id/new_list_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/createlist_btn"
             android:onClick="createList"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_lists_list">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/new_item_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/colorAccent"
+        android:clickable="true"
+        android:onClick="newItem"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

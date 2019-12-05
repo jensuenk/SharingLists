@@ -30,7 +30,6 @@ public class NewListActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private EditText inputTitle;
-    private EditText inputDecription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class NewListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_list);
 
         inputTitle = findViewById(R.id.input_newlist_title);
-        inputDecription= findViewById(R.id.input_newlist_description);
 
         fAuth = FirebaseAuth.getInstance();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
@@ -46,7 +44,6 @@ public class NewListActivity extends AppCompatActivity {
 
     public void createList(View view) {
         final String title = inputTitle.getText().toString().trim();
-        final String description = inputDecription.getText().toString().trim();
 
         if (TextUtils.isEmpty(title)) {
             Toast.makeText(this, "ERROR: Fill in a title!", Toast.LENGTH_SHORT).show();
@@ -61,7 +58,6 @@ public class NewListActivity extends AppCompatActivity {
 
         Map listMap = new HashMap();
         listMap.put("title", title);
-        listMap.put("description", description);
 
         fnewListDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -79,5 +75,8 @@ public class NewListActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         });
+    }
+
+    public void newItem(View view) {
     }
 }

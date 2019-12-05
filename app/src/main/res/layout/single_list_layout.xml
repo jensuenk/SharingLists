@@ -18,13 +18,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="" />
-
-        <TextView
-            android:id="@+id/list_card_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

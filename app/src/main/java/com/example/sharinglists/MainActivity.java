@@ -88,29 +88,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     protected void onBindViewHolder(final ListViewHolder viewHolder, int position, ListModel model)
                     {
-                        final String noteId = getRef(position).getKey();
-                        fListDatabase.child(noteId).addValueEventListener(new ValueEventListener() {
+                        final String listId = getRef(position).getKey();
+                        fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(final DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild("title") && dataSnapshot.hasChild("description"))
+                                if (dataSnapshot.hasChild("title"))
                                 {
                                     String title = dataSnapshot.child("title").getValue().toString();
-                                    String description = dataSnapshot.child("description").getValue().toString();
 
                                     viewHolder.setListTitle(title);
-                                    viewHolder.setListDescription(description);
 
-                                    /*
-                                    viewHolder.noteCard.setOnClickListener(new View.OnClickListener() {
+
+                                    viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent intent = new Intent(EigenLijstActivity.this,NewCocktailActivity.class);
-                                            intent.putExtra("noteId",noteId);
+                                            Intent intent = new Intent(MainActivity.this, NewListActivity.class);
+                                            intent.putExtra("listId", listId);
                                             startActivity(intent);
                                         }
                                     });
 
-                                     */
+
                                 }
                             }
                             @Override
