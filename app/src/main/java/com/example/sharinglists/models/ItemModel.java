@@ -1,4 +1,4 @@
-package com.example.sharinglists;
+package com.example.sharinglists.models;
 
 public class ItemModel {
     public String itemName;

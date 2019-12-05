@@ -1,8 +1,6 @@
 package com.example.sharinglists;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.sharinglists.models.ListModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (fAuth != null) {
             fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
-            generateLists();
+            showLists();
         }
     }
 
@@ -69,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void generateLists() {
-        Toast.makeText(this, "Retreiving lists, please wait...", Toast.LENGTH_SHORT).show();
+    public void showLists() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Retreiving lists, please wait...");
         progressDialog.show();
