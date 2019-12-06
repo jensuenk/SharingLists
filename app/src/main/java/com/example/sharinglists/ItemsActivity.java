@@ -31,7 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewListActivity extends AppCompatActivity {
+public class ItemsActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private DatabaseReference fListDatabase;
@@ -66,42 +66,6 @@ public class NewListActivity extends AppCompatActivity {
         showItems();
     }
 
-    public void createList(View view) {
-        // TODO: move to popup on main_activity
-        final String title = inputTitle.getText().toString().trim();
-
-        if (TextUtils.isEmpty(title)) {
-            Toast.makeText(this, "ERROR: Fill in a title!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Creating list, please wait...");
-        progressDialog.show();
-
-        DatabaseReference fnewListDatabase = fListDatabase.push();
-
-        Map listMap = new HashMap();
-        listMap.put("title", title);
-
-        fnewListDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Intent mainIntent = new Intent(NewListActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
-
-                    Toast.makeText(NewListActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText( NewListActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-                progressDialog.dismiss();
-            }
-        });
-    }
-
     public void newItem(View view) {
         DatabaseReference fnewItemDatabase = fItemDatabase.push();
 
@@ -116,7 +80,7 @@ public class NewListActivity extends AppCompatActivity {
                     showItems();
                 }
                 else {
-                    Toast.makeText( NewListActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText( ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -162,7 +126,7 @@ public class NewListActivity extends AppCompatActivity {
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(NewListActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemsActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
