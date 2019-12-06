@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ItemModel;
@@ -41,26 +43,26 @@ public class ItemsActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private EditText inputTitle;
+    private TextView listTitle;
 
-
+    private String listId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_list);
+        setContentView(R.layout.activity_items);
 
         Intent intent = getIntent();
-        String listId = intent.getStringExtra("listId");
+        listId = intent.getStringExtra("listId");
 
         mItemList = (RecyclerView) findViewById(R.id.main_lists_list);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
 
-        inputTitle = findViewById(R.id.input_newlist_title);
+        listTitle = findViewById(R.id.items_list_title);
 
         fAuth = FirebaseAuth.getInstance();
-        fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+        fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
         fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("Items");
 
         showItems();
@@ -70,7 +72,7 @@ public class ItemsActivity extends AppCompatActivity {
         DatabaseReference fnewItemDatabase = fItemDatabase.push();
 
         Map listMap = new HashMap();
-        listMap.put("title", "");
+        listMap.put("name", "");
         listMap.put("check", false);
 
         fnewItemDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -115,13 +117,41 @@ public class ItemsActivity extends AppCompatActivity {
                         fItemDatabase.child(itemId).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(final DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild("title") && dataSnapshot.hasChild("check"))
+                                if (dataSnapshot.hasChild("name") && dataSnapshot.hasChild("check"))
                                 {
-                                    String title = dataSnapshot.child("title").getValue().toString();
+                                    String title = dataSnapshot.child("name").getValue().toString();
                                     String check = dataSnapshot.child("check").getValue().toString();
 
                                     viewHolder.setItemName(title);
+                                    viewHolder.itemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                        @Override
+                                        public void onFocusChange(View v, boolean hasFocus) {
+                                            if (!hasFocus) {
+                                                Map updateMap = new HashMap();
+                                                updateMap.put("name", viewHolder.getItemName().getText().toString().trim());
+                                                updateMap.put("check", String.valueOf(viewHolder.getCheckBox().isChecked()));
+
+                                                fItemDatabase.child(itemId).updateChildren(updateMap);
+
+                                                Log.i("ItemsActivity", "item " + itemId + " update");
+                                            }
+                                        }
+                                    });
                                     viewHolder.setCheckBox(Boolean.parseBoolean(check));
+                                    viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Map updateMap = new HashMap();
+                                            updateMap.put("name", viewHolder.getItemName().getText().toString().trim());
+                                            updateMap.put("check", String.valueOf(viewHolder.getCheckBox().isChecked()));
+
+                                            fItemDatabase.child(itemId).updateChildren(updateMap);
+
+                                            Log.i("ItemsActivity", "item " + itemId + " update");
+                                        }
+                                    });
+
+
                                 }
                             }
                             @Override
@@ -133,5 +163,24 @@ public class ItemsActivity extends AppCompatActivity {
                 };
         mItemList.setAdapter(firebaseRecyclerAdapter);
         progressDialog.dismiss();
+    }
+    
+
+    private void deleteItems() {
+        /*
+        fItemDatabase.child(noteID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(ItemsActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
+                    noteID = "no";
+                    finish();
+                } else {
+                    Log.e("ItemsActivity ", task.getException().toString());
+                    Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        */
     }
 }

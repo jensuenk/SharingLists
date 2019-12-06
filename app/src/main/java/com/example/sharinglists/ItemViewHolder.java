@@ -13,7 +13,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     TextView itemName;
     CheckBox checkBox;
-    CardView listCard;
+    CardView itemCard;
 
     public ItemViewHolder(View itemView) {
         super(itemView);
@@ -23,14 +23,22 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         itemName = mView.findViewById(R.id.item_card_name);
         checkBox = mView.findViewById(R.id.item_card_checkbox);
 
-        listCard = mView.findViewById(R.id.card_view);
+        itemCard = mView.findViewById(R.id.card_view);
     }
 
     public void setItemName(String name) {
         itemName.setText(name);
     }
 
+    public TextView getItemName() {
+        return itemName;
+    }
+
     public void setCheckBox(boolean value) {
         checkBox.setChecked(value);
+    }
+
+    public CheckBox getCheckBox() {
+        return checkBox;
     }
 }
