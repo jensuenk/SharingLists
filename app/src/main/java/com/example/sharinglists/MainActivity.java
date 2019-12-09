@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void createList(EditText titleEditText) {
+    private void createList(EditText titleEditText) {
         final String title = titleEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(title)) {
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void showLists() {
+    private void showLists() {
         Toast.makeText(this, "Retrieving lists, please wait...", Toast.LENGTH_SHORT).show();
 
 

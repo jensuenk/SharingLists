@@ -88,7 +88,7 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 
-    public void showItems()
+    private void showItems()
     {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Retreiving items, please wait...");
@@ -127,13 +127,7 @@ public class ItemsActivity extends AppCompatActivity {
                                         @Override
                                         public void onFocusChange(View v, boolean hasFocus) {
                                             if (!hasFocus) {
-                                                Map updateMap = new HashMap();
-                                                updateMap.put("name", viewHolder.getItemName().getText().toString().trim());
-                                                updateMap.put("check", String.valueOf(viewHolder.getCheckBox().isChecked()));
-
-                                                fItemDatabase.child(itemId).updateChildren(updateMap);
-
-                                                Log.i("ItemsActivity", "item " + itemId + " update");
+                                                updateItems(viewHolder, itemId);
                                             }
                                         }
                                     });
@@ -141,13 +135,7 @@ public class ItemsActivity extends AppCompatActivity {
                                     viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Map updateMap = new HashMap();
-                                            updateMap.put("name", viewHolder.getItemName().getText().toString().trim());
-                                            updateMap.put("check", String.valueOf(viewHolder.getCheckBox().isChecked()));
-
-                                            fItemDatabase.child(itemId).updateChildren(updateMap);
-
-                                            Log.i("ItemsActivity", "item " + itemId + " update");
+                                            updateItems(viewHolder, itemId);
                                         }
                                     });
 
@@ -164,7 +152,16 @@ public class ItemsActivity extends AppCompatActivity {
         mItemList.setAdapter(firebaseRecyclerAdapter);
         progressDialog.dismiss();
     }
-    
+    private void updateItems(ItemViewHolder viewHolder, String itemId) {
+
+        Map updateMap = new HashMap();
+        updateMap.put("name", viewHolder.getItemName().getText().toString().trim());
+        updateMap.put("check", String.valueOf(viewHolder.getCheckBox().isChecked()));
+
+        fItemDatabase.child(itemId).updateChildren(updateMap);
+
+        Log.i("ItemsActivity", "item " + itemId + " update");
+    }
 
     private void deleteItems() {
         /*
