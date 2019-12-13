@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setTitle("Enter a title");
         dialogBuilder.setMessage("Enter a name for your new list below");
         dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
-            
+
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 createList(title);
@@ -130,9 +129,8 @@ public class MainActivity extends AppCompatActivity {
                     finish();
 
                     Toast.makeText(MainActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText( MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -150,47 +148,43 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<ListModel, ListViewHolder>(options) {
 
+            @Override
+            public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ListViewHolder(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.single_list_layout, parent, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(final ListViewHolder viewHolder, int position, ListModel model) {
+                final String listId = getRef(position).getKey();
+                fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                     @Override
-                    public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-                    {
-                        return new ListViewHolder(LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.single_list_layout, parent, false));
-                    }
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild("title")) {
+                            final String title = dataSnapshot.child("title").getValue().toString();
 
-                    @Override
-                    protected void onBindViewHolder(final ListViewHolder viewHolder, int position, ListModel model)
-                    {
-                        final String listId = getRef(position).getKey();
-                        fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(final DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild("title"))
-                                {
-                                    final String title = dataSnapshot.child("title").getValue().toString();
-
-                                    viewHolder.setListTitle(title);
+                            viewHolder.setListTitle(title);
 
 
-                                    viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                            intent.putExtra("listId", listId);
-                                            intent.putExtra("title", title);
-                                            startActivity(intent);
-                                        }
-                                    });
-
-
+                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
+                                    intent.putExtra("listId", listId);
+                                    intent.putExtra("title", title);
+                                    startActivity(intent);
                                 }
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            });
+                        }
                     }
-                };
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
         mListsList.setAdapter(firebaseRecyclerAdapter);
     }
 

@@ -9,19 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ItemModel;
-import com.example.sharinglists.sign.RegisterActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -90,16 +85,14 @@ public class ItemsActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     showItems();
-                }
-                else {
-                    Toast.makeText( ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void showItems()
-    {
+    private void showItems() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Retreiving items, please wait...");
         progressDialog.show();
@@ -112,57 +105,53 @@ public class ItemsActivity extends AppCompatActivity {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<ItemModel, ItemViewHolder>(options) {
 
+            @Override
+            public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ItemViewHolder(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.single_listitem_layout, parent, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(final ItemViewHolder viewHolder, int position, ItemModel model) {
+                final String itemId = getRef(position).getKey();
+                fItemDatabase.child(itemId).addValueEventListener(new ValueEventListener() {
                     @Override
-                    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-                    {
-                        return new ItemViewHolder(LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.single_listitem_layout, parent, false));
-                    }
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild("name") && dataSnapshot.hasChild("check")) {
+                            String title = dataSnapshot.child("name").getValue().toString();
+                            String check = dataSnapshot.child("check").getValue().toString();
 
-                    @Override
-                    protected void onBindViewHolder(final ItemViewHolder viewHolder, int position, ItemModel model)
-                    {
-                        final String itemId = getRef(position).getKey();
-                        fItemDatabase.child(itemId).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(final DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild("name") && dataSnapshot.hasChild("check"))
-                                {
-                                    String title = dataSnapshot.child("name").getValue().toString();
-                                    String check = dataSnapshot.child("check").getValue().toString();
-
-                                    viewHolder.setItemName(title);
-                                    viewHolder.itemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                        @Override
-                                        public void onFocusChange(View v, boolean hasFocus) {
-                                            if (!hasFocus) {
-                                                updateItems(viewHolder, itemId);
-                                            }
-                                        }
-                                    });
-
-
-                                    viewHolder.setCheckBox(Boolean.parseBoolean(check));
-                                    viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            updateItems(viewHolder, itemId);
-                                        }
-                                    });
-
-
+                            viewHolder.setItemName(title);
+                            viewHolder.itemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                @Override
+                                public void onFocusChange(View v, boolean hasFocus) {
+                                    if (!hasFocus) {
+                                        updateItems(viewHolder, itemId);
+                                    }
                                 }
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(ItemsActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            });
+
+                            viewHolder.setCheckBox(Boolean.parseBoolean(check));
+                            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    updateItems(viewHolder, itemId);
+                                }
+                            });
+                        }
                     }
-                };
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(ItemsActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        };
         mItemList.setAdapter(firebaseRecyclerAdapter);
         progressDialog.dismiss();
     }
+
     private void updateItems(ItemViewHolder viewHolder, String itemId) {
 
         Map updateMap = new HashMap();
@@ -191,6 +180,7 @@ public class ItemsActivity extends AppCompatActivity {
 
     String uid = "zcf3VZhjZtPsF54r7qw6IXpaWyg2";
     String email = "test@test.com";
+
     public void share() {
 
         fListDatabase.child("shares").child("uid").setValue(uid)
@@ -221,5 +211,4 @@ public class ItemsActivity extends AppCompatActivity {
             deleteItem(firebaseRecyclerAdapter.getRef(viewHolder.getAdapterPosition()).getKey());
         }
     };
-
 }
