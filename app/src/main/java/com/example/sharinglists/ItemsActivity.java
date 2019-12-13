@@ -2,6 +2,7 @@ package com.example.sharinglists;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ItemModel;
+import com.example.sharinglists.sign.RegisterActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,6 +48,7 @@ public class ItemsActivity extends AppCompatActivity {
     private TextView listTitle;
 
     private String listId;
+    private String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +57,15 @@ public class ItemsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         listId = intent.getStringExtra("listId");
+        title = intent.getStringExtra("title");
 
         mItemList = (RecyclerView) findViewById(R.id.main_lists_list);
         mItemList.setHasFixedSize(true);
         mItemList.setLayoutManager(new LinearLayoutManager(this));
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mItemList);
 
         listTitle = findViewById(R.id.items_list_title);
+        listTitle.setText(title);
 
         fAuth = FirebaseAuth.getInstance();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
@@ -69,13 +75,13 @@ public class ItemsActivity extends AppCompatActivity {
     }
 
     public void newItem(View view) {
-        DatabaseReference fnewItemDatabase = fItemDatabase.push();
+        DatabaseReference fNewItemDatabase = fItemDatabase.push();
 
         Map listMap = new HashMap();
         listMap.put("name", "");
         listMap.put("check", false);
 
-        fnewItemDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        fNewItemDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
@@ -160,24 +166,57 @@ public class ItemsActivity extends AppCompatActivity {
 
         fItemDatabase.child(itemId).updateChildren(updateMap);
 
-        Log.i("ItemsActivity", "item " + itemId + " update");
+        Log.i("ItemsActivity", "item " + itemId + " updated");
     }
 
-    private void deleteItems() {
-        /*
-        fItemDatabase.child(noteID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void deleteItem(String itemId) {
+
+        fItemDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(ItemsActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
-                    noteID = "no";
-                    finish();
                 } else {
                     Log.e("ItemsActivity ", task.getException().toString());
                     Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        */
+
     }
+
+    String uid = "zcf3VZhjZtPsF54r7qw6IXpaWyg2";
+    String email = "test@test.com";
+    public void share() {
+
+        fListDatabase.child("shares").child("uid").setValue(uid)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+                            Toast.makeText(ItemsActivity.this, "Shared with " + email + "!", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            Toast.makeText(ItemsActivity.this, "ERROR : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+    }
+
+
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            deleteItem(String.valueOf(viewHolder.getAdapterPosition()));
+            Log.i("LOGGGGGGGGGG" , String.valueOf(viewHolder.getAdapterPosition()));
+        }
+    };
+
 }

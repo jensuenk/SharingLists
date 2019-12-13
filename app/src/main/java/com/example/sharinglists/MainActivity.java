@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void newList(View view) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_input, null);
         dialogBuilder.setView(dialogView);
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createList(EditText titleEditText) {
+
         final String title = titleEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(title)) {
@@ -116,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
+
+                    progressDialog.dismiss();
                     Intent mainIntent = new Intent(MainActivity.this, MainActivity.class);
                     startActivity(mainIntent);
                     finish();
@@ -125,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Toast.makeText( MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                progressDialog.dismiss();
             }
         });
     }
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onDataChange(final DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.hasChild("title"))
                                 {
-                                    String title = dataSnapshot.child("title").getValue().toString();
+                                    final String title = dataSnapshot.child("title").getValue().toString();
 
                                     viewHolder.setListTitle(title);
 
@@ -169,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void onClick(View v) {
                                             Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
                                             intent.putExtra("listId", listId);
+                                            intent.putExtra("title", title);
                                             startActivity(intent);
                                         }
                                     });
