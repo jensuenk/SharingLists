@@ -2,6 +2,7 @@ package com.example.sharinglists;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,10 +12,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ItemModel;
@@ -36,14 +38,17 @@ import java.util.Map;
 public class ItemsActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
+    private DatabaseReference fSharesDatabase;
     private DatabaseReference fListDatabase;
     private DatabaseReference fItemDatabase;
 
-    private RecyclerView mItemList;
+    private RecyclerView itemList;
+    private Toolbar toolbar;
 
     private ProgressDialog progressDialog;
 
     private EditText listTitle;
+    private Menu menu;
 
     private String listId;
     private String title;
@@ -59,10 +64,10 @@ public class ItemsActivity extends AppCompatActivity {
         listId = intent.getStringExtra("listId");
         title = intent.getStringExtra("title");
 
-        mItemList = (RecyclerView) findViewById(R.id.main_lists_list);
-        mItemList.setHasFixedSize(true);
-        mItemList.setLayoutManager(new LinearLayoutManager(this));
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mItemList);
+        itemList = findViewById(R.id.main_lists_list);
+        itemList.setHasFixedSize(true);
+        itemList.setLayoutManager(new LinearLayoutManager(this));
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(itemList);
 
         listTitle = findViewById(R.id.items_list_title);
         listTitle.setText(title);
@@ -73,9 +78,15 @@ public class ItemsActivity extends AppCompatActivity {
             }
         });
 
+        toolbar = findViewById(R.id.share_button);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         fAuth = FirebaseAuth.getInstance();
+        fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
-        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("Items");
+        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("items");
 
         showItems();
     }
@@ -146,7 +157,7 @@ public class ItemsActivity extends AppCompatActivity {
                 });
             }
         };
-        mItemList.setAdapter(firebaseRecyclerAdapter);
+        itemList.setAdapter(firebaseRecyclerAdapter);
         progressDialog.dismiss();
     }
 
@@ -176,9 +187,41 @@ public class ItemsActivity extends AppCompatActivity {
         });
     }
 
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            deleteItem(firebaseRecyclerAdapter.getRef(viewHolder.getAdapterPosition()).getKey());
+        }
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        this.menu  = menu;
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        else if (item.getItemId() == R.id.share_button) {
+            share();
+        }
+        return true;
+    }
+
     String uid = "zcf3VZhjZtPsF54r7qw6IXpaWyg2";
     String email = "test@test.com";
-
     public void share() {
 
         fListDatabase.child("shares").child("uid").setValue(uid)
@@ -196,17 +239,4 @@ public class ItemsActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
-    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            deleteItem(firebaseRecyclerAdapter.getRef(viewHolder.getAdapterPosition()).getKey());
-        }
-    };
 }
