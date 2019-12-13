@@ -59,21 +59,20 @@ public class MainActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        updateActivty();
-
-        if (fAuth != null) {
-            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
-            showLists();
-        }
+        updateActivity();
     }
 
 
-    private void updateActivty() {
+    private void updateActivity() {
         // Check if user is logged in
         if (fAuth.getCurrentUser() == null) {
             Intent startIntent = new Intent(this, StartActivity.class);
             startActivity(startIntent);
             finish();
+        }
+        else {
+            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+            showLists();
         }
     }
 
