@@ -2,6 +2,7 @@ package com.example.sharinglists;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import android.os.Bundle;
 
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private FirebaseRecyclerAdapter<ListModel, ListViewHolder> firebaseRecyclerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         mListsList = (RecyclerView) findViewById(R.id.main_lists_list);
         mListsList.setHasFixedSize(true);
         mListsList.setLayoutManager(new LinearLayoutManager(this));
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mListsList);
 
         fAuth = FirebaseAuth.getInstance();
 
@@ -143,8 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 .setLifecycleOwner(this)
                 .build();
 
-        FirebaseRecyclerAdapter<ListModel, ListViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<ListModel, ListViewHolder>(options) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<ListModel, ListViewHolder>(options) {
 
                     @Override
                     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -189,4 +193,32 @@ public class MainActivity extends AppCompatActivity {
                 };
         mListsList.setAdapter(firebaseRecyclerAdapter);
     }
+
+    private void deleteList(String itemId) {
+
+        fListDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "List Deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("ItemsActivity ", task.getException().toString());
+                    Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            deleteList(firebaseRecyclerAdapter.getRef(viewHolder.getAdapterPosition()).getKey());
+        }
+    };
 }

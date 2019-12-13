@@ -187,7 +187,6 @@ public class ItemsActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     String uid = "zcf3VZhjZtPsF54r7qw6IXpaWyg2";
