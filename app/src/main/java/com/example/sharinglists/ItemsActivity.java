@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,6 +51,8 @@ public class ItemsActivity extends AppCompatActivity {
 
     private String listId;
     private String title;
+
+    private FirebaseRecyclerAdapter<ItemModel, ItemViewHolder> firebaseRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +110,7 @@ public class ItemsActivity extends AppCompatActivity {
                 .setLifecycleOwner(this)
                 .build();
 
-        FirebaseRecyclerAdapter<ItemModel, ItemViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<ItemModel, ItemViewHolder>(options) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<ItemModel, ItemViewHolder>(options) {
 
                     @Override
                     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -137,6 +140,8 @@ public class ItemsActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
+
+
                                     viewHolder.setCheckBox(Boolean.parseBoolean(check));
                                     viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -214,8 +219,7 @@ public class ItemsActivity extends AppCompatActivity {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            deleteItem(String.valueOf(viewHolder.getAdapterPosition()));
-            Log.i("LOGGGGGGGGGG" , String.valueOf(viewHolder.getAdapterPosition()));
+            deleteItem(firebaseRecyclerAdapter.getRef(viewHolder.getAdapterPosition()).getKey());
         }
     };
 
