@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        updateActivivty();
+        updateActivty();
 
         if (fAuth != null) {
             fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void updateActivivty() {
+    private void updateActivty() {
         // Check if user is logged in
         if (fAuth.getCurrentUser() == null) {
             Intent startIntent = new Intent(this, StartActivity.class);

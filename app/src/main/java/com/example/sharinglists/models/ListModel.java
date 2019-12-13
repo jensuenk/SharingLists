@@ -1,6 +1,7 @@
 package com.example.sharinglists.models;
 
 public class ListModel {
+
     public String listTitle;
 
     public ListModel() {

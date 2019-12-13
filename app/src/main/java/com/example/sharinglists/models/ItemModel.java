@@ -1,9 +1,9 @@
 package com.example.sharinglists.models;
 
 public class ItemModel {
+
     public String itemName;
     public boolean checkBox;
-
 
     public ItemModel() {
 

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,7 @@ public class ItemsActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private TextView listTitle;
+    private EditText listTitle;
 
     private String listId;
     private String title;
@@ -65,6 +66,12 @@ public class ItemsActivity extends AppCompatActivity {
 
         listTitle = findViewById(R.id.items_list_title);
         listTitle.setText(title);
+        listTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                fListDatabase.child("title").setValue(listTitle.getText().toString().trim());
+            }
+        });
 
         fAuth = FirebaseAuth.getInstance();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
@@ -80,16 +87,7 @@ public class ItemsActivity extends AppCompatActivity {
         listMap.put("name", "");
         listMap.put("check", false);
 
-        fNewItemDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    showItems();
-                } else {
-                    Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        fNewItemDatabase.setValue(listMap);
     }
 
     private void showItems() {

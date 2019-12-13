@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
 
-        <TextView
+        <EditText
             android:id="@+id/items_list_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,16 +21,6 @@
             android:textAlignment="textStart"
             android:textSize="24sp"
             android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginStart="10dp"
-            android:alpha=".3"
-            android:background="@android:color/black" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

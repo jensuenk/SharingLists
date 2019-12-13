@@ -1,4 +1,4 @@
-package com.example.sharinglists.sign;
+package com.example.sharinglists.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
 
-                                    if (task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
                                         startActivity(mainIntent);
                                         finish();
