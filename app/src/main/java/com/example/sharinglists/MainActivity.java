@@ -64,14 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        logout = (Button)findViewById(R.id.logoutBtn);
-        logout.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                   Logout();
-            }
-        }));
 
         updateActivity();
     }

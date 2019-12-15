@@ -21,24 +21,13 @@
         app:srcCompat="@drawable/ic_add_white_24dp" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_lists_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_lists_list">
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
     </androidx.recyclerview.widget.RecyclerView>
-
-    <Button
-        android:id="@+id/logoutBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/colorAccent"
-        android:clickable="true"
-
-        android:text="logout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_add_white_24dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
