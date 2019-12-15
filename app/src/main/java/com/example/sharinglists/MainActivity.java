@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private Button logout;
+
     private FirebaseRecyclerAdapter<ListModel, ListViewHolder> firebaseRecyclerAdapter;
 
     @Override
@@ -58,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mListsList);
 
         fAuth = FirebaseAuth.getInstance();
+
+        logout = (Button)findViewById(R.id.logoutBtn);
+        logout.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    fAuth.signOut();
+                    finish();
+                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+            }
+        }));
 
         updateActivity();
     }
