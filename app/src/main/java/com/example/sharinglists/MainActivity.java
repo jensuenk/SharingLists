@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -67,15 +69,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                    fAuth.signOut();
-                    finish();
-                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                   Logout();
             }
         }));
 
         updateActivity();
     }
+    private void Logout(){
+        fAuth.signOut();
+        finish();
+        startActivity(new Intent(MainActivity.this, MainActivity.class));
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.LogoutMenu:{
+                Logout();
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void updateActivity() {
         // Check if user is logged in

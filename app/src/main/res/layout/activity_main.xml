@@ -34,7 +34,7 @@
         android:layout_margin="16dp"
         android:backgroundTint="@color/colorAccent"
         android:clickable="true"
-        
+
         android:text="logout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
