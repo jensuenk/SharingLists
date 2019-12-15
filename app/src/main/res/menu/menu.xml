@@ -4,7 +4,7 @@
     <item
     android:id="@+id/LogoutMenu"
     android:orderInCategory="100"
-    app:showAsAction="always"
+    app:showAsAction="never"
     android:title="Logout"
     >
 
