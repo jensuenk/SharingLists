@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,18 +53,17 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loggin in, please wait...");
+        progressDialog.setMessage("Login in, please wait...");
         progressDialog.show();
 
         fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
+                    checkEmailVerification();
 
-                    Toast.makeText(LoginActivity.this, "Signed in successfully!", Toast.LENGTH_SHORT).show();
+
+                    //Toast.makeText(LoginActivity.this, "Signed in successfully!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(LoginActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -71,6 +71,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void checkEmailVerification(){
+        FirebaseUser firebaseUser = fAuth.getInstance().getCurrentUser();
+        boolean emailflag = firebaseUser.isEmailVerified();
+
+        if (emailflag){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }else{
+            Toast.makeText(this, "verify your email", Toast.LENGTH_LONG).show();
+            fAuth.signOut();
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

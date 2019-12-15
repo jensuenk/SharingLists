@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -68,9 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
 
                                     if (task.isSuccessful()) {
-                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        startActivity(mainIntent);
-                                        finish();
+                                        sendEmailVerification();
                                         Toast.makeText(RegisterActivity.this, "User successfully created!", Toast.LENGTH_SHORT).show();
 
                                     } else {
@@ -87,6 +86,27 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
+    private  void sendEmailVerification(){
+        FirebaseUser firebaseUser = fAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            firebaseUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        Toast.makeText(RegisterActivity.this, "successfully registered, verification email send",Toast.LENGTH_LONG).show();
+                        fAuth.signOut();
+                        finish();
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                    }else{
+                        Toast.makeText(RegisterActivity.this,"verification mail has not been send",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

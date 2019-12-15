@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.sharinglists.login.LoginActivity;
 import com.example.sharinglists.login.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -21,7 +23,7 @@ public class StartActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        updateActivivty();
+        updateActivity();
     }
 
     public void login(View view) {
@@ -34,11 +36,12 @@ public class StartActivity extends AppCompatActivity {
         startActivity(registerIntent);
     }
 
-    private void updateActivivty() {
+    private void updateActivity() {
         if (fAuth.getCurrentUser() != null) {
             Intent startIntent = new Intent(this, MainActivity.class);
             startActivity(startIntent);
             finish();
         }
     }
+
 }
