@@ -99,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                     }else{
-                        Toast.makeText(RegisterActivity.this,"verification mail has not been send",Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterActivity.this,"verification mail has not been send, the server is most likely down",Toast.LENGTH_LONG).show();
                     }
                 }
             });
