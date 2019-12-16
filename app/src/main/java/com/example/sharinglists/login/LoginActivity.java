@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharinglists.MainActivity;
@@ -29,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private TextView forgotPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +42,20 @@ public class LoginActivity extends AppCompatActivity {
 
         fAuth = FirebaseAuth.getInstance();
 
+        forgotPassword = (TextView)findViewById(R.id.tvForgotPassword);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, PasswordActivity.class));
+            }
+        });
+
+
     }
 
     public void loginUser(View view) {
