@@ -28,12 +28,6 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvForgotPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Forgot password?" />
-
     <EditText
         android:id="@+id/input_login_email"
         android:layout_width="match_parent"
@@ -70,5 +64,12 @@
         android:layout_marginRight="50dp"
         android:onClick="loginUser"
         android:text="@string/login_btn" />
+
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forgot password?"
+        android:textAlignment="center" />
 
 </LinearLayout>

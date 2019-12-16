@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,12 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private DatabaseReference fListDatabase;
+    private DatabaseReference fUserListDatabase;
 
-    private RecyclerView mListsList;
+    private RecyclerView ListsList;
 
     private ProgressDialog progressDialog;
-
-    private Button logout;
 
     private FirebaseRecyclerAdapter<ListModel, ListViewHolder> firebaseRecyclerAdapter;
 
@@ -57,14 +57,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mListsList = (RecyclerView) findViewById(R.id.main_lists_list);
-        mListsList.setHasFixedSize(true);
-        mListsList.setLayoutManager(new LinearLayoutManager(this));
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mListsList);
+        ListsList = findViewById(R.id.main_lists_list);
+        ListsList.setHasFixedSize(true);
+        ListsList.setLayoutManager(new LinearLayoutManager(this));
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(ListsList);
 
         fAuth = FirebaseAuth.getInstance();
-
-
 
         updateActivity();
     }
@@ -98,8 +96,23 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else {
-            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+            //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+            fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists");
+            fUserListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
             showLists();
+        }
+    }
+
+
+    private void collectSharedUids(Map<String,Object> users) {
+
+        ArrayList<Long> uids = new ArrayList<>();
+
+        for (Map.Entry<String, Object> entry : users.entrySet()){
+
+            Map singleUser = (Map) entry.getValue();
+            //Get phone field and append to list
+            uids.add((Long) singleUser.get("phone"));
         }
     }
 
@@ -143,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
 
         Map listMap = new HashMap();
         listMap.put("title", title);
+        listMap.put("owner-uid", fAuth.getCurrentUser().getUid());
+        listMap.put("owner-email", fAuth.getCurrentUser().getEmail());
 
         fnewListDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -186,22 +201,24 @@ public class MainActivity extends AppCompatActivity {
                 fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChild("title")) {
-                            final String title = dataSnapshot.child("title").getValue().toString();
+                        //if (dataSnapshot.hasChild("shares")) {
+                            if (dataSnapshot.hasChild("title")) {
+                                final String title = dataSnapshot.child("title").getValue().toString();
 
-                            viewHolder.setListTitle(title);
+                                viewHolder.setListTitle(title);
 
 
-                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                    intent.putExtra("listId", listId);
-                                    intent.putExtra("title", title);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
+                                viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
+                                        intent.putExtra("listId", listId);
+                                        intent.putExtra("title", title);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
+                        //}
                     }
 
                     @Override
@@ -211,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         };
-        mListsList.setAdapter(firebaseRecyclerAdapter);
+        ListsList.setAdapter(firebaseRecyclerAdapter);
     }
 
     private void deleteList(String itemId) {

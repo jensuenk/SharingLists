@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,9 +87,11 @@ public class ItemsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         fAuth = FirebaseAuth.getInstance();
-        fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
-        fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
-        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("items");
+        //fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
+        //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
+        //fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("items");
+        fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId);
+        fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId).child("items");
 
         showItems();
     }
@@ -215,28 +220,78 @@ public class ItemsActivity extends AppCompatActivity {
             finish();
         }
         else if (item.getItemId() == R.id.share_button) {
-            share();
+            createShareDialog();
         }
         return true;
     }
 
-    String uid = "zcf3VZhjZtPsF54r7qw6IXpaWyg2";
-    String email = "test@test.com";
+    /*
     public void share() {
 
-        fListDatabase.child("shares").child("uid").setValue(uid)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+        DatabaseReference fNewShareDatabase = fSharesDatabase.push();
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(ItemsActivity.this, "Shared with " + email + "!", Toast.LENGTH_SHORT).show();
+        Map listMap = new HashMap();
+        listMap.put("uid", fAuth.getCurrentUser().getUid());
 
-                        } else {
-                            Toast.makeText(ItemsActivity.this, "ERROR : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+        fNewShareDatabase.setValue(listMap);
+    }
 
-                    }
-                });
+     */
+
+
+    public void createShareDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_input, null);
+        dialogBuilder.setView(dialogView);
+
+        final EditText code = dialogView.findViewById(R.id.dialog_edittext);
+
+        dialogBuilder.setTitle("Enter share code");
+        dialogBuilder.setMessage("Enter the share code of the person you want to share this list with");
+        dialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                newShare(code);
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void newShare(EditText titleEditText) {
+
+        final String code = titleEditText.getText().toString().trim();
+
+        if (TextUtils.isEmpty(title)) {
+            Toast.makeText(this, "ERROR: Fill in a code!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Sharing list, please wait...");
+        progressDialog.show();
+
+        DatabaseReference fShareDatabase = fListDatabase.child("shares").push();
+
+        Map listMap = new HashMap();
+        listMap.put("uid", code);
+
+        fShareDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                    progressDialog.dismiss();
+
+                    Toast.makeText(ItemsActivity.this, "Share successful.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
