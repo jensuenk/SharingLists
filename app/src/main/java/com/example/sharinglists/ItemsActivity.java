@@ -275,7 +275,7 @@ public class ItemsActivity extends AppCompatActivity {
         progressDialog.setMessage("Sharing list, please wait...");
         progressDialog.show();
 
-        DatabaseReference fShareDatabase = fListDatabase.child("shares").push();
+        DatabaseReference fShareDatabase = fListDatabase.child(code).push();
 
         Map listMap = new HashMap();
         listMap.put("uid", code);

@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         else {
             //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
             fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists");
-            fUserListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
             showLists();
         }
     }
@@ -165,9 +164,6 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
                     progressDialog.dismiss();
-                    Intent mainIntent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
 
                     Toast.makeText(MainActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -180,8 +176,14 @@ public class MainActivity extends AppCompatActivity {
     private void showLists() {
         Toast.makeText(this, "Retrieving lists, please wait...", Toast.LENGTH_SHORT).show();
 
+        Query query = fListDatabase.orderByChild("owner-uid").equalTo(fAuth.getCurrentUser().getUid());
+        //for (int i = 0; i < 25; i++) {
+            //DataSnapshot dataSnapshot = new DataSnapshot()
+            //query = fListDatabase.orderByChild("share-" + i).equalTo(fAuth.getCurrentUser().getUid());
+        //}
 
-        Query query = fListDatabase.orderByValue();
+        //Query query = fListDatabase.orderByPriority();
+
         FirebaseRecyclerOptions<ListModel> options = new FirebaseRecyclerOptions.Builder<ListModel>()
                 .setQuery(query, ListModel.class)
                 .setLifecycleOwner(this)
@@ -201,24 +203,22 @@ public class MainActivity extends AppCompatActivity {
                 fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
-                        //if (dataSnapshot.hasChild("shares")) {
-                            if (dataSnapshot.hasChild("title")) {
-                                final String title = dataSnapshot.child("title").getValue().toString();
+                        if (dataSnapshot.hasChild("title")) {
+                            final String title = dataSnapshot.child("title").getValue().toString();
 
-                                viewHolder.setListTitle(title);
+                            viewHolder.setListTitle(title);
 
 
-                                viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                        intent.putExtra("listId", listId);
-                                        intent.putExtra("title", title);
-                                        startActivity(intent);
-                                    }
-                                });
-                            }
-                        //}
+                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
+                                    intent.putExtra("listId", listId);
+                                    intent.putExtra("title", title);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
                     }
 
                     @Override
