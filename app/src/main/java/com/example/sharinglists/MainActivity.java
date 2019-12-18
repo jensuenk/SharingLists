@@ -19,14 +19,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ListModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -185,17 +182,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void showLists() {
 
-    //private void showLists() {
         Toast.makeText(this, "Retrieving lists, please wait...", Toast.LENGTH_SHORT).show();
 
-
-        /*
-        for sharecodes van user
-
-         */
-        //Query query = fListDatabase.child(fAuth.getCurrentUser().getUid()).orderByChild("uid").equalTo(fAuth.getCurrentUser().getUid());
-
-        //Query query = fListDatabase.orderByChild("owner-uid").equalTo(fAuth.getCurrentUser().getUid());
         Query query = fDatabase.child("Shares").orderByChild("uid").equalTo(fAuth.getCurrentUser().getUid());
 
 
@@ -219,14 +207,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot listSnapshot: dataSnapshot.getChildren()) {
-                            if (listSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
-
-                                //if (listSnapshot.child("id").getValue().toString().equals(getRef(position).getKey())) {
-                                    Log.i("TESTJEE ids:", listSnapshot.child("id").getValue().toString());
-                                    Log.i("TESTJEE ref:", getRef(position).getKey());
+                            if (listSnapshot.getKey().equals(getRef(position).getKey())) {
+                                if (listSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
 
                                     final String listId = listSnapshot.child("id").getValue().toString();
-
 
                                     fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -255,8 +239,7 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
-
-                                //}
+                                }
                             }
                         }
                     }
