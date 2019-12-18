@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.sharinglists.models.ListModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private DatabaseReference fListDatabase;
+    private DatabaseReference fDatabase;
 
     private RecyclerView ListsList;
 
@@ -96,24 +98,33 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid());
+            fDatabase = FirebaseDatabase.getInstance().getReference();
             fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists");
 
 
+            /*
             fListDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot listsSnapshot) {
                     for (DataSnapshot listSnapshot: listsSnapshot.getChildren()) {
                         Iterable<DataSnapshot> sharesSnapshot = listSnapshot.child("shares").getChildren();
-                        for (DataSnapshot shareSnapshot: sharesSnapshot) {
-                            if (shareSnapshot.child("uid").getValue(String.class).equals(fAuth.getCurrentUser().getUid())) {
-                                Log.i("SHARETESTS", "EWAAAAA dit was" + shareSnapshot.getKey());
-                                Log.i("SHARETESTS", "Hunk " + shareSnapshot.getRef().getParent().getParent().toString());
-                                showList(shareSnapshot.getRef().getParent().getParent());
+                        if (listSnapshot.child("owner-uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
+                            showList(listSnapshot.getKey());
+                            break;
+                        }
 
+                        for (DataSnapshot shareSnapshot: sharesSnapshot) {
+                            //Log.i("SHARETESTS", shareSnapshot.child("uid").getValue().toString());
+                            //Log.i("SHARETESTS", fAuth.getCurrentUser().getUid());
+
+                            if (shareSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
+                                //Log.i("SHARETESTS", "EWAAAAA dit was" + shareSnapshot.getKey());
+                                //Log.i("SHARETESTS", "Hunk " + shareSnapshot.getRef().getParent().getParent().toString());
+
+                                showList(listSnapshot.getKey());
+                                break;
                             }
                         }
-                        //Log.i("LISTS OWNER TESTJEEEEE", );
-                        //Log.i("SHARES TESTJEEEEE", listSnapshot.child("shares").child("uid").getValue(String.class));
                     }
                 }
 
@@ -124,23 +135,9 @@ public class MainActivity extends AppCompatActivity {
             });
 
             //showLists();
-            /*
-            DataSnapshot contactChildren = f.getChildren();
-
-            FIRDatabase.database().reference().child("users").child("userID").child("phoneNumber").observeSingleEvent(of: .value, with: {(snap) in
-
-                if snap.exists(){
-
-                    //Your user already has a Phone number
-
-                }else{
-                    //Phone number not available
-
-                }
-            })
 
              */
-
+            showLists();
         }
     }
 
@@ -180,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating list, please wait...");
         progressDialog.show();
 
-        DatabaseReference fnewListDatabase = fListDatabase.push();
+        final DatabaseReference fnewListDatabase = fListDatabase.push();
 
         Map listMap = new HashMap();
         listMap.put("title", title);
@@ -191,52 +188,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-
+                    fnewListDatabase.child("id").setValue(fnewListDatabase.getKey());
                     progressDialog.dismiss();
-
                     Toast.makeText(MainActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+
+        // Create shares table
     }
 
-    private void showList(DatabaseReference databaseReference) {
+    public void showLists() {
+
+    //private void showLists() {
         Toast.makeText(this, "Retrieving lists, please wait...", Toast.LENGTH_SHORT).show();
 
+
+        /*
+        for sharecodes van user
+
+         */
+        //Query query = fListDatabase.child(fAuth.getCurrentUser().getUid()).orderByChild("uid").equalTo(fAuth.getCurrentUser().getUid());
+
         //Query query = fListDatabase.orderByChild("owner-uid").equalTo(fAuth.getCurrentUser().getUid());
-        //for (int i = 0; i < 25; i++) {
-            //DataSnapshot dataSnapshot = new DataSnapshot()
-            //query = fListDatabase.orderByChild("share-" + i).equalTo(fAuth.getCurrentUser().getUid());
-        //}
+        Query query = fDatabase.child("Shares").orderByChild("uid").equalTo(fAuth.getCurrentUser().getUid());
 
-        fListDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot listsSnapshot) {
-                for (DataSnapshot listSnapshot: listsSnapshot.getChildren()) {
-                    Iterable<DataSnapshot> sharesSnapshot = listSnapshot.child("shares").getChildren();
-                    for (DataSnapshot shareSnapshot: sharesSnapshot) {
-                        if (shareSnapshot.child("uid").getValue(String.class).equals(fAuth.getCurrentUser().getUid())) {
-                            Log.i("SHARETESTS", "EWAAAAA dit was" + shareSnapshot.getKey());
-                            Log.i("SHARETESTS", "Hunk " + shareSnapshot.getRef().getParent().getParent().toString());
-                            showList(shareSnapshot.getRef().getParent().getParent());
-
-                        }
-                    }
-                    //Log.i("LISTS OWNER TESTJEEEEE", );
-                    //Log.i("SHARES TESTJEEEEE", listSnapshot.child("shares").child("uid").getValue(String.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("ERROR TESTJEEEEEEEEEEE", "onCancelled", databaseError.toException());
-            }
-        });
-
-        //Query query = databaseReference.orderByPriority();
-        Query query = fListDatabase.orderByChild("owner-uid").equalTo(fAuth.getCurrentUser().getUid());
 
         FirebaseRecyclerOptions<ListModel> options = new FirebaseRecyclerOptions.Builder<ListModel>()
                 .setQuery(query, ListModel.class)
@@ -253,11 +232,40 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(final ListViewHolder viewHolder, int position, ListModel model) {
-                final String listId = getRef(position).getKey();
+
+                //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists");
+
+                final  String listId = getRef(position).getKey();
+
+
+                DatabaseReference shareReference = fDatabase.child("Shares");//.child(getRef(position).toString());
+
+                shareReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot listSnapshot: dataSnapshot.getChildren()) {
+                            if (listSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
+                                Log.i("TESTJEE ref:", listSnapshot.child("id").getValue().toString());
+                            }
+                        }
+
+                        //Log.i("TESTJEE ref:", dataSnapshot.child("uid").getValue().toString());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+
                 fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
-                        /*
+
                         if (dataSnapshot.hasChild("title")) {
                             final String title = dataSnapshot.child("title").getValue().toString();
 
@@ -275,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
 
-                         */
+
                     }
 
                     @Override
@@ -283,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
             }
         };
         ListsList.setAdapter(firebaseRecyclerAdapter);

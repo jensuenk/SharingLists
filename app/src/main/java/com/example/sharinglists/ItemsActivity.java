@@ -41,6 +41,7 @@ import java.util.Map;
 public class ItemsActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
+    private DatabaseReference fDatabase;
     private DatabaseReference fSharesDatabase;
     private DatabaseReference fListDatabase;
     private DatabaseReference fItemDatabase;
@@ -90,6 +91,7 @@ public class ItemsActivity extends AppCompatActivity {
         //fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
         //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
         //fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("items");
+        fDatabase = FirebaseDatabase.getInstance().getReference();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId);
         fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId).child("items");
 
@@ -275,10 +277,11 @@ public class ItemsActivity extends AppCompatActivity {
         progressDialog.setMessage("Sharing list, please wait...");
         progressDialog.show();
 
-        DatabaseReference fShareDatabase = fListDatabase.child("shares").push();
+        DatabaseReference fShareDatabase = fDatabase.child("Shares").push();
 
         Map listMap = new HashMap();
         listMap.put("uid", code);
+        listMap.put("id", listId);
 
         fShareDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
