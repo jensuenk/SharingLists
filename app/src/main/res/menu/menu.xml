@@ -18,10 +18,10 @@
 
     </item>
     <item
-        android:id="@+id/refreshMenu"
+        android:id="@+id/SharingCode"
         android:orderInCategory="300"
         app:showAsAction="never"
-        android:title="Refresh"
+        android:title="Sharing Code"
         >
 
     </item>

@@ -71,6 +71,19 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, MainActivity.class));
     }
 
+    private void ShowSharingCode(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(fAuth.getCurrentUser().getUid())
+                .setTitle("Enter this code on the other device")
+                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -80,8 +93,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.LogoutMenu:{
+            case R.id.LogoutMenu:
+            {
                 Logout();
+            }
+            case R.id.SharingCode:
+            {
+                ShowSharingCode();
             }
         }
         return super.onOptionsItemSelected(item);
