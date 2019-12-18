@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -72,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ShowSharingCode(){
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("EditText",fAuth.getCurrentUser().getUid() );
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(MainActivity.this,"code has been copied",Toast.LENGTH_LONG).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage(fAuth.getCurrentUser().getUid())
                 .setTitle("Enter this code on the other device")
