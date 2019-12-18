@@ -246,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                                                         Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
                                                         intent.putExtra("listId", listId);
                                                         intent.putExtra("title", title);
+                                                        intent.putExtra("ownerUid", dataSnapshot.child("owner-uid").getValue().toString());
                                                         startActivity(intent);
                                                     }
                                                 });

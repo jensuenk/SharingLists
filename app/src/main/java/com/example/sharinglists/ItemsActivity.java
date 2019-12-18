@@ -56,6 +56,7 @@ public class ItemsActivity extends AppCompatActivity {
 
     private String listId;
     private String title;
+    private String ownerUid;
 
     private FirebaseRecyclerAdapter<ItemModel, ItemViewHolder> firebaseRecyclerAdapter;
 
@@ -67,6 +68,7 @@ public class ItemsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         listId = intent.getStringExtra("listId");
         title = intent.getStringExtra("title");
+        ownerUid = intent.getStringExtra("ownerUid");
 
         itemList = findViewById(R.id.main_lists_list);
         itemList.setHasFixedSize(true);
@@ -82,11 +84,6 @@ public class ItemsActivity extends AppCompatActivity {
             }
         });
 
-        toolbar = findViewById(R.id.share_button);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         fAuth = FirebaseAuth.getInstance();
         //fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
         //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
@@ -94,6 +91,16 @@ public class ItemsActivity extends AppCompatActivity {
         fDatabase = FirebaseDatabase.getInstance().getReference();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId);
         fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId).child("items");
+
+
+
+        toolbar = findViewById(R.id.share_button);
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
 
         showItems();
     }
@@ -242,26 +249,36 @@ public class ItemsActivity extends AppCompatActivity {
 
 
     public void createShareDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        if (ownerUid.equals(fAuth.getCurrentUser().getUid())) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_input, null);
-        dialogBuilder.setView(dialogView);
+            LayoutInflater inflater = this.getLayoutInflater();
+            final View dialogView = inflater.inflate(R.layout.dialog_input, null);
+            dialogBuilder.setView(dialogView);
 
-        final EditText code = dialogView.findViewById(R.id.dialog_edittext);
+            final EditText code = dialogView.findViewById(R.id.dialog_edittext);
 
-        dialogBuilder.setTitle("Enter share code");
-        dialogBuilder.setMessage("Enter the share code of the person you want to share this list with");
-        dialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+            dialogBuilder.setTitle("Enter share code");
+            dialogBuilder.setMessage("Enter the share code of the person you want to share this list with");
+            dialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
 
-            public void onClick(DialogInterface dialog, int whichButton) {
+                public void onClick(DialogInterface dialog, int whichButton) {
 
-                newShare(code);
-            }
-        });
+                    newShare(code);
+                }
+            });
 
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
+            AlertDialog alertDialog = dialogBuilder.create();
+            alertDialog.show();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
+            builder.setMessage("Ask the owner of this list to add more users")
+                    .setTitle("No Permissons");
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
     }
 
     private void newShare(EditText titleEditText) {
