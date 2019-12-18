@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         final DatabaseReference fnewListDatabase = fListDatabase.push();
 
+        // Create lists table
         Map listMap = new HashMap();
         listMap.put("title", title);
         listMap.put("owner-uid", fAuth.getCurrentUser().getUid());
@@ -158,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         // Create shares table
         final DatabaseReference fnewShareDatabase = fDatabase.child("Shares").push();
