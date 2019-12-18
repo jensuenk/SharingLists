@@ -249,40 +249,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
-
-/*
-                fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(final DataSnapshot dataSnapshot) {
-
-                        if (dataSnapshot.hasChild("title")) {
-                            final String title = dataSnapshot.child("title").getValue().toString();
-
-                            viewHolder.setListTitle(title);
-
-
-                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                    intent.putExtra("listId", listId);
-                                    intent.putExtra("title", title);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-*/
             }
         };
         ListsList.setAdapter(firebaseRecyclerAdapter);
