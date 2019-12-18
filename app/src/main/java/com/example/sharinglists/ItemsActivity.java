@@ -184,6 +184,7 @@ public class ItemsActivity extends AppCompatActivity {
         fItemDatabase.child(itemId).updateChildren(updateMap);
 
         Log.i("ItemsActivity", "item " + itemId + " updated");
+        showItems();
     }
 
     private void deleteItem(String itemId) {

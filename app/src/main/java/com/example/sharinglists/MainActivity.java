@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void ShowSharingCode(){
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("EditText",fAuth.getCurrentUser().getUid() );
+        ClipData clip = ClipData.newPlainText("EditText", fAuth.getCurrentUser().getUid() );
         clipboard.setPrimaryClip(clip);
         Toast.makeText(MainActivity.this,"code has been copied",Toast.LENGTH_LONG).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -190,8 +191,9 @@ public class MainActivity extends AppCompatActivity {
 
         Map shareMap = new HashMap();
         shareMap.put("uid", fAuth.getCurrentUser().getUid());
+        shareMap.put("id", fnewListDatabase.getKey());
+        shareMap.put("star", false);
 
-        shareMap.put(("id"), fnewListDatabase.getKey());
         fnewShareDatabase.setValue(shareMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -231,34 +233,70 @@ public class MainActivity extends AppCompatActivity {
                 fSharesDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot listSnapshot: dataSnapshot.getChildren()) {
-                            if (listSnapshot.getKey().equals(getRef(position).getKey())) {
-                                if (listSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
+                        for (final DataSnapshot shareSnapshot: dataSnapshot.getChildren()) {
+                            if (shareSnapshot.getKey().equals(getRef(position).getKey())) {
+                                if (shareSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
 
-                                    final String listId = listSnapshot.child("id").getValue().toString();
+                                    final String listId = shareSnapshot.child("id").getValue().toString();
 
                                     fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(final DataSnapshot dataSnapshot) {
 
-                                            if (dataSnapshot.hasChild("title")) {
-                                                final String title = dataSnapshot.child("title").getValue().toString();
+                                            final String title = dataSnapshot.child("title").getValue().toString();
 
-                                                viewHolder.setListTitle(title);
+                                            viewHolder.setListTitle(title);
 
+                                            viewHolder.setStar(false);
 
-                                                viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                                        intent.putExtra("listId", listId);
-                                                        intent.putExtra("title", title);
-                                                        intent.putExtra("ownerUid", dataSnapshot.child("owner-uid").getValue().toString());
-                                                        startActivity(intent);
+                                            viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                @Override
+                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                    viewHolder.setStar(isChecked);
+                                                }
+                                            });
+                                            /*
+                                            fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("Stars").addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    for (final DataSnapshot starSnapshot : dataSnapshot.getChildren()) {
+                                                        if (starSnapshot.child("id").getValue().equals(listId)) {
+                                                            viewHolder.setStar(Boolean.valueOf(starSnapshot.child("value").getValue().toString()));
+
+                                                            viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                                @Override
+                                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                    starSnapshot.child("id").getRef().setValue(listId);
+                                                                    starSnapshot.child("value").getRef().setValue(isChecked);
+
+                                                                }
+                                                            });
+                                                        }
                                                     }
-                                                });
-                                            }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+
+
+                                            });
+
+                                             */
+
+                                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
+                                                    intent.putExtra("listId", listId);
+                                                    intent.putExtra("title", title);
+                                                    intent.putExtra("ownerUid", dataSnapshot.child("owner-uid").getValue().toString());
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
+
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
@@ -280,9 +318,9 @@ public class MainActivity extends AppCompatActivity {
         ListsList.setAdapter(firebaseRecyclerAdapter);
     }
 
-    private void deleteList(String itemId) {
+    private void deleteList(final String itemId) {
 
-        fListDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+        fSharesDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
