@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sharinglists.models.ListModel;
+import com.example.sharinglists.utils.TimeFormat;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -175,14 +177,12 @@ public class MainActivity extends AppCompatActivity {
         listMap.put("owner-uid", fAuth.getCurrentUser().getUid());
         listMap.put("owner-email", fAuth.getCurrentUser().getEmail());
         listMap.put(("id"), fnewListDatabase.getKey());
+        listMap.put("timestamp", ServerValue.TIMESTAMP);
 
         fnewListDatabase.setValue(listMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "List successfully created.", Toast.LENGTH_SHORT).show();
-                } else {
+                if (!task.isSuccessful()) {
                     Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -199,14 +199,12 @@ public class MainActivity extends AppCompatActivity {
         fnewShareDatabase.setValue(shareMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    progressDialog.dismiss();
-                    Toast.makeText(MainActivity.this, "Share successfully created.", Toast.LENGTH_SHORT).show();
-                } else {
+                if (!task.isSuccessful()) {
                     Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        progressDialog.dismiss();
         showLists();
     }
 
@@ -246,10 +244,21 @@ public class MainActivity extends AppCompatActivity {
                                         fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(final DataSnapshot dataSnapshot) {
-                                                if (dataSnapshot.hasChild("title")) {
+                                                if (dataSnapshot.hasChild("title") && dataSnapshot.hasChild("owner-email")) {
                                                     final String title = dataSnapshot.child("title").getValue().toString();
+                                                    final String owner = dataSnapshot.child("owner-email").getValue().toString();
+                                                    final String timestamp = dataSnapshot.child("timestamp").getValue().toString();
 
                                                     viewHolder.setListTitle(title);
+
+                                                    if (owner.equals(fAuth.getCurrentUser().getEmail())) {
+                                                        viewHolder.setListOwner("Me");
+                                                    }
+                                                    else {
+                                                        viewHolder.setListOwner("Shared by: " + owner);
+                                                    }
+
+                                                    viewHolder.setListDate("Edited " + TimeFormat.getTimeAgo(Long.parseLong(timestamp)));
 
                                                     viewHolder.setStar(false);
 

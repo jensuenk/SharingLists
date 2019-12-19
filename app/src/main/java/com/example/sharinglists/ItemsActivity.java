@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -141,6 +142,7 @@ public class ItemsActivity extends AppCompatActivity {
                 fItemDatabase.child(itemId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
+                        updateTimestamp();
                         if (dataSnapshot.hasChild("name") && dataSnapshot.hasChild("check")) {
                             String title = dataSnapshot.child("name").getValue().toString();
                             String check = dataSnapshot.child("check").getValue().toString();
@@ -188,6 +190,17 @@ public class ItemsActivity extends AppCompatActivity {
 
         Log.i("ItemsActivity", "item " + itemId + " updated");
 
+    }
+
+    private void updateTimestamp() {
+        fListDatabase.child("timestamp").setValue(ServerValue.TIMESTAMP).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(ItemsActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void deleteItem(String itemId) {

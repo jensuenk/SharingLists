@@ -14,7 +14,9 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     View mView;
 
-    TextView cardTitle;
+    TextView listTitle;
+    TextView listOwner;
+    TextView listDate;
     CardView listCard;
     ToggleButton star;
 
@@ -23,7 +25,9 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
         mView = itemView;
 
-        cardTitle = mView.findViewById(R.id.list_card_title);
+        listTitle = mView.findViewById(R.id.list_card_title);
+        listOwner = mView.findViewById(R.id.list_card_owner);
+        listDate = mView.findViewById(R.id.list_card_date);
         listCard = mView.findViewById(R.id.card_view);
         star = mView.findViewById(R.id.star_button);
         star.setBackgroundResource(R.drawable.ic_star_unchecked);
@@ -32,7 +36,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setListTitle(String title) {
-        cardTitle.setText(title);
+        listTitle.setText(title);
     }
 
     public void setStar(Boolean check) {
@@ -43,4 +47,8 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         else
             star.setBackgroundResource(R.drawable.ic_star_unchecked);
     }
+
+    public void setListOwner(String owner) { listOwner.setText(owner); }
+
+    public void setListDate(String date) { listDate.setText(date); }
 }
