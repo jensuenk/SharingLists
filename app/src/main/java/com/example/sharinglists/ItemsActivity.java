@@ -86,9 +86,6 @@ public class ItemsActivity extends AppCompatActivity {
         });
 
         fAuth = FirebaseAuth.getInstance();
-        //fSharesDatabase = FirebaseDatabase.getInstance().getReference().child("Shares").child(fAuth.getCurrentUser().getUid()).child(listId).child("shares");
-        //fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId);
-        //fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(fAuth.getCurrentUser().getUid()).child(listId).child("items");
         fDatabase = FirebaseDatabase.getInstance().getReference();
         fListDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId);
         fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId).child("items");
@@ -114,6 +111,7 @@ public class ItemsActivity extends AppCompatActivity {
         listMap.put("check", false);
 
         fNewItemDatabase.setValue(listMap);
+        updateTimestamp();
         showItems();
     }
 
@@ -142,7 +140,7 @@ public class ItemsActivity extends AppCompatActivity {
                 fItemDatabase.child(itemId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
-                        updateTimestamp();
+
                         if (dataSnapshot.hasChild("name") && dataSnapshot.hasChild("check")) {
                             String title = dataSnapshot.child("name").getValue().toString();
                             String check = dataSnapshot.child("check").getValue().toString();
@@ -189,7 +187,7 @@ public class ItemsActivity extends AppCompatActivity {
         fItemDatabase.child(itemId).updateChildren(updateMap);
 
         Log.i("ItemsActivity", "item " + itemId + " updated");
-
+        updateTimestamp();
     }
 
     private void updateTimestamp() {
@@ -216,6 +214,7 @@ public class ItemsActivity extends AppCompatActivity {
                 }
             }
         });
+        updateTimestamp();
         showItems();
     }
 

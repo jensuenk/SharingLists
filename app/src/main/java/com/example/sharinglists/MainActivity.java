@@ -194,9 +194,24 @@ public class MainActivity extends AppCompatActivity {
         Map shareMap = new HashMap();
         shareMap.put("uid", fAuth.getCurrentUser().getUid());
         shareMap.put("id", fnewListDatabase.getKey());
-        shareMap.put("star", false);
 
         fnewShareDatabase.setValue(shareMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "ERROR: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Create favorites table
+        final DatabaseReference fnewFavoritesDatabase = fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("favorites").push();
+
+        Map favoriteMap = new HashMap();
+        favoriteMap.put("id", fnewListDatabase.getKey());
+        favoriteMap.put("value", false);
+
+        fnewFavoritesDatabase.setValue(favoriteMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (!task.isSuccessful()) {
@@ -260,14 +275,36 @@ public class MainActivity extends AppCompatActivity {
 
                                                     viewHolder.setListDate("Edited " + TimeFormat.getTimeAgo(Long.parseLong(timestamp)));
 
-                                                    viewHolder.setStar(false);
 
-                                                    viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                    fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("favorites").addValueEventListener(new ValueEventListener() {
                                                         @Override
-                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                            viewHolder.setStar(isChecked);
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            for (final DataSnapshot favoritesSnapshot : dataSnapshot.getChildren()) {
+                                                                if (favoritesSnapshot.hasChild("id") && favoritesSnapshot.hasChild("value")) {
+                                                                    if (favoritesSnapshot.child("id").getValue().equals(listId)) {
+                                                                        viewHolder.setStar(Boolean.valueOf(favoritesSnapshot.child("value").getValue().toString()));
+
+                                                                        viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                                            @Override
+                                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                                viewHolder.setStar(isChecked);
+                                                                                favoritesSnapshot.child("value").getRef().setValue(isChecked);
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+                                                            }
                                                         }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+
+
                                                     });
+
+
 
                                                     viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
                                                         @Override
@@ -280,40 +317,7 @@ public class MainActivity extends AppCompatActivity {
                                                         }
                                                     });
                                                 }
-
-                                        /*
-                                        fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("Stars").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                for (final DataSnapshot starSnapshot : dataSnapshot.getChildren()) {
-                                                    if (starSnapshot.child("id").getValue().equals(listId)) {
-                                                        viewHolder.setStar(Boolean.valueOf(starSnapshot.child("value").getValue().toString()));
-
-                                                        viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                                            @Override
-                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                                starSnapshot.child("id").getRef().setValue(listId);
-                                                                starSnapshot.child("value").getRef().setValue(isChecked);
-
-                                                            }
-                                                        });
-                                                    }
-                                                }
                                             }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                            }
-
-
-                                        });
-
-                                         */
-
-
-                                            }
-
 
                                             @Override
                                             public void onCancelled(DatabaseError databaseError) {
