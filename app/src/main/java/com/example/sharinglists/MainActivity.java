@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("EditText", fAuth.getCurrentUser().getUid() );
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(MainActivity.this,"code has been copied",Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this,"Code has been copied",Toast.LENGTH_LONG).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage(fAuth.getCurrentUser().getUid())
                 .setTitle("Enter this code on the other device")
@@ -111,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.SharingCode:
             {
                 ShowSharingCode();
+                break;
+            }
+            case R.id.Refresh:
+            {
+                showLists();
                 break;
             }
         }
@@ -300,10 +305,7 @@ public class MainActivity extends AppCompatActivity {
                                                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                                         }
-
-
                                                     });
-
 
 
                                                     viewHolder.listCard.setOnClickListener(new View.OnClickListener() {

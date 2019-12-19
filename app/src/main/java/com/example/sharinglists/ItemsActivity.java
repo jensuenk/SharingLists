@@ -151,6 +151,7 @@ public class ItemsActivity extends AppCompatActivity {
                                 public void onFocusChange(View v, boolean hasFocus) {
                                     if (!hasFocus) {
                                         updateItems(viewHolder, itemId);
+
                                     }
                                 }
                             });
@@ -330,5 +331,10 @@ public class ItemsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Map favoriteMap = new HashMap();
+        favoriteMap.put("id", listId);
+        favoriteMap.put("value", false);
+        fDatabase.child("Users").child(code).child("favorites").push().setValue(favoriteMap);
     }
 }

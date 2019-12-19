@@ -2,27 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-    android:id="@+id/LogoutMenu"
-    android:orderInCategory="100"
-    app:showAsAction="never"
-    android:title="Logout"
-    >
-
-</item>
-    <item
-        android:id="@+id/SettingsMenu"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        android:title="Settings"
-        >
+        android:id="@+id/LogoutMenu"
+        android:orderInCategory="100"
+        android:title="@string/logout_menu"
+        app:showAsAction="never">
 
     </item>
+
     <item
         android:id="@+id/SharingCode"
         android:orderInCategory="300"
-        app:showAsAction="never"
-        android:title="Sharing Code"
-        >
+        android:title="@string/sharing_code_menu"
+        app:showAsAction="never">
+
+    </item>
+    <item
+        android:id="@+id/Refresh"
+        android:orderInCategory="200"
+        android:title="@string/refresh_lists_menu"
+        app:showAsAction="never">
 
     </item>
 
