@@ -233,77 +233,85 @@ public class MainActivity extends AppCompatActivity {
                 fSharesDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (final DataSnapshot shareSnapshot: dataSnapshot.getChildren()) {
-                            if (shareSnapshot.getKey().equals(getRef(position).getKey())) {
-                                if (shareSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
+                        for (final DataSnapshot shareSnapshot : dataSnapshot.getChildren()) {
+                            try {
+                                if (shareSnapshot.getKey().equals(getRef(position).getKey())) {
+                                    if (shareSnapshot.child("uid").getValue().toString().equals(fAuth.getCurrentUser().getUid())) {
 
-                                    final String listId = shareSnapshot.child("id").getValue().toString();
+                                        final String listId = shareSnapshot.child("id").getValue().toString();
 
-                                    fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                                        fListDatabase.child(listId).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(final DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.hasChild("title")) {
+                                                    final String title = dataSnapshot.child("title").getValue().toString();
 
-                                            final String title = dataSnapshot.child("title").getValue().toString();
+                                                    viewHolder.setListTitle(title);
 
-                                            viewHolder.setListTitle(title);
+                                                    viewHolder.setStar(false);
 
-                                            viewHolder.setStar(false);
-
-                                            viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                                @Override
-                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                    viewHolder.setStar(isChecked);
-                                                }
-                                            });
-                                            /*
-                                            fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("Stars").addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    for (final DataSnapshot starSnapshot : dataSnapshot.getChildren()) {
-                                                        if (starSnapshot.child("id").getValue().equals(listId)) {
-                                                            viewHolder.setStar(Boolean.valueOf(starSnapshot.child("value").getValue().toString()));
-
-                                                            viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                                                @Override
-                                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                                    starSnapshot.child("id").getRef().setValue(listId);
-                                                                    starSnapshot.child("value").getRef().setValue(isChecked);
-
-                                                                }
-                                                            });
+                                                    viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                        @Override
+                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                            viewHolder.setStar(isChecked);
                                                         }
+                                                    });
+
+                                                    viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
+                                                            intent.putExtra("listId", listId);
+                                                            intent.putExtra("title", title);
+                                                            intent.putExtra("ownerUid", dataSnapshot.child("owner-uid").getValue().toString());
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+                                                }
+
+                                        /*
+                                        fDatabase.child("Users").child(fAuth.getCurrentUser().getUid()).child("Stars").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (final DataSnapshot starSnapshot : dataSnapshot.getChildren()) {
+                                                    if (starSnapshot.child("id").getValue().equals(listId)) {
+                                                        viewHolder.setStar(Boolean.valueOf(starSnapshot.child("value").getValue().toString()));
+
+                                                        viewHolder.star.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                            @Override
+                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                starSnapshot.child("id").getRef().setValue(listId);
+                                                                starSnapshot.child("value").getRef().setValue(isChecked);
+
+                                                            }
+                                                        });
                                                     }
                                                 }
+                                            }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                }
-
-
-                                            });
-
-                                             */
-
-                                            viewHolder.listCard.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent intent = new Intent(MainActivity.this, ItemsActivity.class);
-                                                    intent.putExtra("listId", listId);
-                                                    intent.putExtra("title", title);
-                                                    intent.putExtra("ownerUid", dataSnapshot.child("owner-uid").getValue().toString());
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                        }
+                                            }
 
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                            Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                        });
+
+                                         */
+
+
+                                            }
+
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                Toast.makeText(MainActivity.this, "ERROR: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
                                 }
+                            }
+                            catch (Exception e) {
                             }
                         }
                     }
@@ -319,6 +327,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteList(final String itemId) {
+/*
+        fSharesDatabase.child(itemId).child("id").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (final DataSnapshot idSnapshot : dataSnapshot.getChildren()) {
+                    if (idSnapshot.getValue().equals()) {
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+ */
+
 
         fSharesDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
