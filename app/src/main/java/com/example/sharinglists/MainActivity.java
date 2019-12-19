@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        showLists();
     }
 
     public void showLists() {
@@ -341,7 +342,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {

@@ -113,6 +113,7 @@ public class ItemsActivity extends AppCompatActivity {
         listMap.put("check", false);
 
         fNewItemDatabase.setValue(listMap);
+        showItems();
     }
 
     private void showItems() {
@@ -158,7 +159,9 @@ public class ItemsActivity extends AppCompatActivity {
                             viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+
                                     updateItems(viewHolder, itemId);
+                                    showItems();
                                 }
                             });
                         }
@@ -184,7 +187,7 @@ public class ItemsActivity extends AppCompatActivity {
         fItemDatabase.child(itemId).updateChildren(updateMap);
 
         Log.i("ItemsActivity", "item " + itemId + " updated");
-        showItems();
+
     }
 
     private void deleteItem(String itemId) {
@@ -200,6 +203,7 @@ public class ItemsActivity extends AppCompatActivity {
                 }
             }
         });
+        showItems();
     }
 
     ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
