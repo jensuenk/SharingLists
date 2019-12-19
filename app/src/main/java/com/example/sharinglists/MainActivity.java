@@ -104,10 +104,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.LogoutMenu:
             {
                 Logout();
+                break;
             }
             case R.id.SharingCode:
             {
                 ShowSharingCode();
+                break;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -327,25 +329,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteList(final String itemId) {
-/*
-        fSharesDatabase.child(itemId).child("id").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (final DataSnapshot idSnapshot : dataSnapshot.getChildren()) {
-                    if (idSnapshot.getValue().equals()) {
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
- */
-
 
         fSharesDatabase.child(itemId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
