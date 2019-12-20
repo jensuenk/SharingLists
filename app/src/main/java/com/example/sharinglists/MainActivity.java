@@ -71,17 +71,18 @@ public class MainActivity extends AppCompatActivity {
 
         updateActivity();
     }
-    private void Logout(){
+
+    private void Logout() {
         fAuth.signOut();
         finish();
         startActivity(new Intent(MainActivity.this, MainActivity.class));
     }
 
-    private void ShowSharingCode(){
+    private void ShowSharingCode() {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("EditText", fAuth.getCurrentUser().getUid() );
+        ClipData clip = ClipData.newPlainText("EditText", fAuth.getCurrentUser().getUid());
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(MainActivity.this,"Code has been copied",Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "Code has been copied", Toast.LENGTH_LONG).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setMessage(fAuth.getCurrentUser().getUid())
                 .setTitle("Enter this code on the other device")
@@ -102,19 +103,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.LogoutMenu:
-            {
+        switch (item.getItemId()) {
+            case R.id.LogoutMenu: {
                 Logout();
                 break;
             }
-            case R.id.SharingCode:
-            {
+            case R.id.SharingCode: {
                 ShowSharingCode();
                 break;
             }
-            case R.id.Refresh:
-            {
+            case R.id.Refresh: {
                 showLists();
                 break;
             }
@@ -128,8 +126,7 @@ public class MainActivity extends AppCompatActivity {
             Intent startIntent = new Intent(this, StartActivity.class);
             startActivity(startIntent);
             finish();
-        }
-        else {
+        } else {
             fDatabase = FirebaseDatabase.getInstance().getReference();
             fListDatabase = fDatabase.child("Lists");
             fSharesDatabase = fDatabase.child("Shares");
@@ -224,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         progressDialog.dismiss();
         showLists();
     }
@@ -273,8 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                     if (owner.equals(fAuth.getCurrentUser().getEmail())) {
                                                         viewHolder.setListOwner("Me");
-                                                    }
-                                                    else {
+                                                    } else {
                                                         viewHolder.setListOwner("Shared by: " + owner);
                                                     }
 
@@ -330,8 +327,7 @@ public class MainActivity extends AppCompatActivity {
                                         });
                                     }
                                 }
-                            }
-                            catch (Exception e) {
+                            } catch (Exception e) {
                             }
                         }
                     }

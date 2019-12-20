@@ -48,7 +48,11 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
             star.setBackgroundResource(R.drawable.ic_star_unchecked);
     }
 
-    public void setListOwner(String owner) { listOwner.setText(owner); }
+    public void setListOwner(String owner) {
+        listOwner.setText(owner);
+    }
 
-    public void setListDate(String date) { listDate.setText(date); }
+    public void setListDate(String date) {
+        listDate.setText(date);
+    }
 }

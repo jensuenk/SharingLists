@@ -43,7 +43,6 @@ public class ItemsActivity extends AppCompatActivity {
 
     private FirebaseAuth fAuth;
     private DatabaseReference fDatabase;
-    private DatabaseReference fSharesDatabase;
     private DatabaseReference fListDatabase;
     private DatabaseReference fItemDatabase;
 
@@ -58,6 +57,9 @@ public class ItemsActivity extends AppCompatActivity {
     private String listId;
     private String title;
     private String ownerUid;
+
+    public boolean foundShare = false;
+
 
     private FirebaseRecyclerAdapter<ItemModel, ItemViewHolder> firebaseRecyclerAdapter;
 
@@ -91,13 +93,11 @@ public class ItemsActivity extends AppCompatActivity {
         fItemDatabase = FirebaseDatabase.getInstance().getReference().child("Lists").child(listId).child("items");
 
 
-
         toolbar = findViewById(R.id.share_button);
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
 
         showItems();
@@ -236,7 +236,7 @@ public class ItemsActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.share_menu, menu);
-        this.menu  = menu;
+        this.menu = menu;
 
         return true;
     }
@@ -245,26 +245,11 @@ public class ItemsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-        }
-        else if (item.getItemId() == R.id.share_button) {
+        } else if (item.getItemId() == R.id.share_button) {
             createShareDialog();
         }
         return true;
     }
-
-    /*
-    public void share() {
-
-        DatabaseReference fNewShareDatabase = fSharesDatabase.push();
-
-        Map listMap = new HashMap();
-        listMap.put("uid", fAuth.getCurrentUser().getUid());
-
-        fNewShareDatabase.setValue(listMap);
-    }
-
-     */
-
 
     public void createShareDialog() {
         if (ownerUid.equals(fAuth.getCurrentUser().getUid())) {
@@ -281,15 +266,18 @@ public class ItemsActivity extends AppCompatActivity {
             dialogBuilder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int whichButton) {
-
-                    newShare(code);
+                    if (code.getText().toString().equals(fAuth.getCurrentUser().getUid())) {
+                        Toast.makeText(ItemsActivity.this, "You can't share with yourself!", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        newShare(code);
+                    }
                 }
             });
 
             AlertDialog alertDialog = dialogBuilder.create();
             alertDialog.show();
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(ItemsActivity.this);
             builder.setMessage("Ask the owner of this list to add more users")
                     .setTitle("No Permissons");
