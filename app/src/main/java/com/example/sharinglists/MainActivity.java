@@ -293,7 +293,9 @@ public class MainActivity extends AppCompatActivity {
                                                                             @Override
                                                                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                                                 viewHolder.setStar(isChecked);
-                                                                                favoritesSnapshot.child("value").getRef().setValue(isChecked);
+                                                                                if (favoritesSnapshot.child("id").getValue().equals(listId)) {
+                                                                                    favoritesSnapshot.child("value").getRef().setValue(isChecked);
+                                                                                }
                                                                             }
                                                                         });
                                                                     }

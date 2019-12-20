@@ -16,4 +16,5 @@
     <string name="logout_menu">Logout</string>
     <string name="refresh_lists_menu">Refresh Lists</string>
     <string name="sharing_code_menu">Show Sharing Code</string>
+    <string name="main_my_lists_title">My Lists:</string>
 </resources>
